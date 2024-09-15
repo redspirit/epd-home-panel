@@ -21,7 +21,7 @@ const makeByUrl = async (url, w, h) => {
         height: h || HEIGHT,
     });
     await page.goto(url);
-    await page.screenshot({ path: 'D:\\workspace\\epd-home-panel\\tmp\\screen.png' });
+    await page.screenshot({ path: `${process.cwd()}/tmp/screen.png` });
     await page.close();
 }
 

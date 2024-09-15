@@ -1,14 +1,21 @@
 
-let screenshot = require('./modules/screenshot');
+// let screenshot = require('./modules/screenshot');
+let Colors = require('./modules/Colors');
+let fs = require('fs').promises;
 
 
 setTimeout(async () => {
-    await screenshot.makeByUrl('https://google.com/');
+    // await screenshot.makeByUrl('https://lospec.com');
+    // console.log('Done');
+    // process.exit(0);
 
-    console.log('Done');
+    let colors = new Colors();
+    await colors.preparePalette('./tmp/palette.png');
+    let encodedBuffer = await colors.getImageBytes('./tmp/out.png');
 
-    process.exit(0);
+    await fs.writeFile('./tmp/out.bin', encodedBuffer)
 
-}, 1000);
+    console.log('ok');
+}, 100);
 
 
