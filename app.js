@@ -10,10 +10,11 @@ setTimeout(async () => {
     // process.exit(0);
 
     let colors = new Colors();
-    await colors.preparePalette('./tmp/palette.png');
+    await colors.preparePalette('./palettes/palette1.png');
     let encodedBuffer = await colors.getImageBytes('./tmp/out.png');
 
-    await fs.writeFile('./tmp/out.bin', encodedBuffer)
+    console.log(encodedBuffer);
+    // await fs.writeFile('./tmp/out.bin', encodedBuffer);
 
     console.log('ok');
 }, 100);
