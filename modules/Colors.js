@@ -40,6 +40,30 @@ class Colors {
         }
         return encodedBuf;
     }
+
+    splitColors(fourColorBuffer) {
+        let baseBuf = Buffer.alloc(fourColorBuffer.length / 2);
+        //let grayBuf = Buffer.alloc(fourColorBuffer.length / 2);
+        for (let i = 0; i < fourColorBuffer.length; i += 2) {
+            let b1 = fourColorBuffer.readUInt8(i);
+            let b2 = fourColorBuffer.readUInt8(i + 1);
+
+            let res1 = 0;
+            res1 += (b1 & 0b11) === 3 ? 0b1 : 0;
+            res1 += (b1 & 0b1100) === 3 ? 0b10 : 0;
+            res1 += (b1 & 0b110000) === 3 ? 0b100 : 0;
+            res1 += (b1 & 0b11000000) === 3 ? 0b1000 : 0;
+            res1 += (b2 & 0b11) === 3 ? 0b10000 : 0;
+            res1 += (b2 & 0b1100) === 3 ? 0b100000 : 0;
+            res1 += (b2 & 0b110000) === 3 ? 0b1000000 : 0;
+            res1 += (b2 & 0b11000000) === 3 ? 0b10000000 : 0;
+            baseBuf.writeUInt8(res1, i / 2);
+        }
+
+        return {
+            baseBuf
+        }
+    }
 }
 
 module.exports = Colors;

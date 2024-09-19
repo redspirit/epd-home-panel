@@ -345,18 +345,43 @@ void EPD_13IN3K_color_Base(UBYTE color)
 function :	Sends the image buffer in RAM to e-Paper and displays
 parameter:
 ******************************************************************************/
-void EPD_13IN3K_Display(UBYTE *Image)
+void EPD_13IN3K_Display(UBYTE *buf)
 {
 	UWORD i, j;
 	UWORD height = EPD_13IN3K_HEIGHT;
 	UWORD width = EPD_13IN3K_WIDTH/8;
 	
-	EPD_13IN3K_SendCommand(0x24);   //write RAM for black(0)/white (1)
+	// EPD_13IN3K_SendCommand(0x24);   //write RAM for black(0)/white (1)
+	// for(i=0; i<height; i++)
+	// {
+	// 	for(j=0; j<width; j+=2) {
+  //     UBYTE b1 = buf[j + i*width];
+  //     UBYTE b2 = buf[j + i*width + 1];
+  //     UBYTE res = 0;
+  //     res += (b1 & 0b11) == 3 ? 0b1 : 0; 
+  //     res += (b1 & 0b1100) == 3 ? 0b10 : 0; 
+  //     res += (b1 & 0b110000) == 3 ? 0b100 : 0; 
+  //     res += (b1 & 0b11000000) == 3 ? 0b1000 : 0; 
+  //     res += (b2 & 0b11) == 3 ? 0b10000 : 0; 
+  //     res += (b2 & 0b1100) == 3 ? 0b100000 : 0; 
+  //     res += (b2 & 0b110000) == 3 ? 0b1000000 : 0; 
+  //     res += (b2 & 0b11000000) == 3 ? 0b10000000 : 0; 
+  //     EPD_13IN3K_SendData(res);
+  //   }
+	// }
+
+  EPD_13IN3K_SendCommand(0x24);   //write RAM for black(0)/white (1)
 	for(i=0; i<height; i++)
 	{
-		for(j=0; j<width; j++)
-			EPD_13IN3K_SendData(Image[j + i*width]);
+		for(j=0; j<width; j++) {
+      EPD_13IN3K_SendData(buf[j + i*width]);
+      //Serial.print(buf[j + i*width], HEX);
+      //Serial.print(" ");
+    }
+		//Serial.print("\r\n");
 	}
+
+
 	EPD_13IN3K_TurnOnDisplay();	
 }
 

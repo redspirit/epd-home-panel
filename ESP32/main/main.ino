@@ -1,7 +1,6 @@
 #include "DEV_Config.h"
 #include "EPD_13in3k.h"
 #include "GUI_Paint.h"
-#include "imagedata.h"
 #include <stdlib.h>
 
 #include <WiFi.h>
@@ -119,27 +118,6 @@ void test1(UBYTE *BlackImage) {
     DEV_Delay_ms(3000);
 }
 
-
-void draw() {
-
-    //Create a new image cache
-    UBYTE *BlackImage;
-    UDOUBLE Imagesize = ((EPD_13IN3K_WIDTH % 8 == 0)? (EPD_13IN3K_WIDTH / 8 ): (EPD_13IN3K_WIDTH / 8 + 1)) * EPD_13IN3K_HEIGHT;
-    if((BlackImage = (UBYTE *)malloc(Imagesize)) == NULL) {
-        printf("Failed to apply for black memory...\r\n");
-        while (1);
-    }
-    // printf("Paint_NewImage\r\n");
-
-    Paint_NewImage(BlackImage, EPD_13IN3K_WIDTH, EPD_13IN3K_HEIGHT, 0, WHITE);
-    //Paint_SelectImage(BlackImage); -
-    //Paint_Clear(WHITE); -
-    Paint_DrawBitMap(gImage_13in3k);
-
-    EPD_13IN3K_Display_Base(BlackImage);
-    //DEV_Delay_ms(3000);
-}
-
 void handlePOST() {
     int len = server.args();
 
@@ -147,34 +125,26 @@ void handlePOST() {
     Serial.print("Query X: ");
     Serial.println(server.arg("x").toInt());
 
-    UBYTE buf[body.length()+1];
-    body.getBytes(buf, body.length()+1);
+    UBYTE *buf = new UBYTE[81600];
+    body.getBytes(buf, 81600);
 
-    for (int i = 0; i < body.length(); i++) {
-      Serial.print(buf[i], HEX);
-      Serial.print(" ");
-    }
+    // for (int i = 0; i < body.length(); i++) {
+    //   Serial.print(buf[i], HEX);
+    //   Serial.print(" ");
+    // }
+
+    printf("Display...\r\n");
+
+    EPD_13IN3K_Display(buf);
+    //EPD_13IN3K_Display_Base(buf);
+    // draw();
+
+    printf("Goto Sleep...\r\n");
+    EPD_13IN3K_Sleep();
+    DEV_Delay_ms(2000); //important, at least 2s
 
 
-  // unsigned int length = server.args()[0].size();
-  // if (length > 0) {
-  //   byte* data = new byte[length];
-  //   server.readBytes(data, length);
-
-  //   // Выводим массив байтов в серийную консоль
-  //   Serial.println("POST DATA (bytes):");
-  //   for (int i = 0; i < length; i++) {
-  //     Serial.print((int)data[i], HEX); // Вывод каждого байта в шестнадцатеричном формате
-  //     Serial.print(" ");
-  //   }
-  //   Serial.println();
-
-  //   // Освобождаем память
-  //   delete[] data;
-  // } else {
-  //   Serial.println("No POST data received");
-  // }
-  server.send(200, "text/plain", "OK)");
+    server.send(200, "text/plain", "OK)");
 }
 
 void creareServer() {
@@ -211,11 +181,7 @@ void setup() {
     // EPD_13IN3K_Init();
     // EPD_13IN3K_Clear();
 
-    printf("Goto Sleep...\r\n");
-    EPD_13IN3K_Sleep();
-    // free(BlackImage);
-    // BlackImage = NULL;
-    DEV_Delay_ms(2000);//important, at least 2s
+    printf("Ready post...\r\n");
 }
 
 void loop() {
