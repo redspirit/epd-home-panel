@@ -19,31 +19,40 @@ class Colors {
         if(!this.paletteColors) throw new Error('palette image is not loaded');
         let {bitmap} = await Jimp.read(imageFile);
 
-        let pixelByte = 0;
         let pixelsCount = bitmap.data.length / 4;
-        let encodedBuf = Buffer.alloc(pixelsCount / 4); // pack 4 pixels in 1 byte, each pixel is 2bit info (4-colors)
+        let indexes = [];
         for(let i = 0; i < pixelsCount; i++) {
-        // for(let i = 0; i < 100; i++) {
             let color = bitmap.data.readUIntBE(i * 4, 3);
             let index = this.paletteColors.indexOf(color);
             if(index === -1) throw new Error(`image color #${color.toString(16)} not in palette`);
-
-            if(i % 4 === 0) pixelByte += index;
-            if(i % 4 === 1) pixelByte += index << 2;
-            if(i % 4 === 2) pixelByte += index << 4;
-            if(i % 4 === 3) {
-                pixelByte += index << 6;
-                let bytePos = (i + 1) / 4 - 1;
-                encodedBuf.writeUInt8(pixelByte, bytePos);
-                pixelByte = 0;
-            }
+            indexes.push(index);
         }
-        return encodedBuf;
+
+        let baseArr = []; // array for black/white colors bytes
+        let grayArr = [] // array for 2-grays colors bytes
+        for(let i = 0; i < pixelsCount; i += 8) {
+            let pixByteBase = 0;
+            let pixByteGray = 0;
+            let onePixel = indexes.slice(i, i + 8);
+            for(let j = 0; j < 8; j++) {
+                let p = onePixel[7-j];
+                // if(p === 3) pixByteBase += 0;
+                // if(p === 2) pixByteGray += 0;
+                if(p === 1) pixByteGray += 1 << j;
+                if(p === 0) pixByteBase += 1 << j;
+            }
+            baseArr.push(pixByteBase);
+            grayArr.push(pixByteGray);
+        }
+        return {
+            base: Buffer.from(baseArr),
+            gray: Buffer.from(grayArr),
+        };
     }
 
     splitColors(fourColorBuffer) {
-        let baseBuf = Buffer.alloc(fourColorBuffer.length / 2);
-        //let grayBuf = Buffer.alloc(fourColorBuffer.length / 2);
+        let baseArr = [];
+        let grayArr = [];
         for (let i = 0; i < fourColorBuffer.length; i += 2) {
             let b1 = fourColorBuffer.readUInt8(i);
             let b2 = fourColorBuffer.readUInt8(i + 1);
@@ -57,11 +66,12 @@ class Colors {
             res1 += (b2 & 0b1100) === 3 ? 0b100000 : 0;
             res1 += (b2 & 0b110000) === 3 ? 0b1000000 : 0;
             res1 += (b2 & 0b11000000) === 3 ? 0b10000000 : 0;
-            baseBuf.writeUInt8(res1, i / 2);
+            // baseArr.push(~res1);
+            baseArr.push(res1);
         }
 
         return {
-            baseBuf
+            baseBuf: Buffer.from(baseArr)
         }
     }
 }

@@ -1,5 +1,6 @@
 
 // let screenshot = require('./modules/screenshot');
+let {makeRequest} = require('./modules/Http');
 let Colors = require('./modules/Colors');
 let {bufferImage} = require('./modules/testImage');
 let fs = require('fs').promises;
@@ -11,18 +12,20 @@ setTimeout(async () => {
 
     let colors = new Colors();
     await colors.preparePalette('./palettes/palette1.png');
-    let encodedBuffer = await colors.getImageBytes('./tmp/out.png');
+    let out = await colors.getImageBytes('./tmp/out.png');
 
-    // console.log(encodedBuffer);
+    //return console.log(out);
 
-    let cols = colors.splitColors(encodedBuffer);
-
-    console.log(cols);
+    // let cols = colors.splitColors(encodedBuffer);
+    // return console.log(cols);
 
     // await fs.writeFile('./tmp/out.bin', encodedBuffer);
     //await fs.writeFile('./tmp/baseBuf.bin', cols.baseBuf);
-    await fs.writeFile('./tmp/testImg.bin', bufferImage);
 
+    console.log('make request...');
+    await makeRequest(out.base);
+    // await makeRequest(out.gray);
+    // await makeRequest(bufferImage);
     console.log('ok');
 }, 100);
 
