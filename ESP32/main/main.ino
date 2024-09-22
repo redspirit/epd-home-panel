@@ -68,34 +68,77 @@ void test1(UBYTE *BlackImage) {
     DEV_Delay_ms(3000);
 }
 
-void handlePOST() {
-    int len = server.args();
-
+void postPart1() {
     String body = server.arg("plain");
-    // Serial.print("Query X: ");
-    // Serial.println(server.arg("x").toInt());
-    
     UBYTE *imageData = new UBYTE[81600];
     body.getBytes(imageData, 81600);
 
-    // const char* p = body.c_str();
+    printf("Display 1...\r\n");
+    EPD_13IN3K_Init_4GRAY();
 
-    // for (int i = 0; i < 16; i++) {
-    //   Serial.print(*(p + i), HEX);
-    //   Serial.print(" ");
-    // }
+    UDOUBLE i;
+    UBYTE b1;
+    UBYTE b2;
+    UBYTE k;
+    EPD_13IN3K_SendCommand(0x24);
+    for(i=0; i<81600; i++) {
 
-    printf("Display...\r\n");
+      EPD_13IN3K_SendData(imageData[i]);
+      // b1 = 0;
+      // b2 = 0;
+      // for (k = 0; k < 8; k++) {
+      //     if (k >= 4) {
+      //         b1 += ((imageData[i] >> k) & 1) << ((k - 4) * 2);
+      //     } else {
+      //         b2 += ((imageData[i] >> k) & 1) << (k * 2);
+      //     }
+      // }
 
-    // EPD_13IN3K_Display(p);
-    EPD_13IN3K_Display(imageData);
-    //EPD_13IN3K_Display_Base(buf);
-    // draw();
+      // EPD_13IN3K_SendData(b1);
+      // EPD_13IN3K_SendData(b2);
+    }
 
-    printf("Goto Sleep...\r\n");
+    delete[] imageData;
+    printf("Display 1 done\r\n");
+
+    server.send(200, "text/plain", "OK 1");
+}
+
+void postPart2() {
+    String body = server.arg("plain");
+    UBYTE *imageData = new UBYTE[81600];
+    body.getBytes(imageData, 81600);
+
+    printf("Display 2...\r\n");
+
+    UDOUBLE i;
+    UBYTE b1;
+    UBYTE b2;
+    UBYTE k;
+    EPD_13IN3K_SendCommand(0x26);
+    for(i=0; i<81600; i++) {
+
+      EPD_13IN3K_SendData(imageData[i]);
+      // b1 = 0;
+      // b2 = 0;
+      // for (k = 0; k < 8; k++) {
+      //     if (k >= 4) {
+      //         b1 += ((imageData[i] >> k) & 1) << ((k - 4) * 2);
+      //     } else {
+      //         b2 += ((imageData[i] >> k) & 1) << (k * 2);
+      //     }
+      // }
+
+      // EPD_13IN3K_SendData(b1);
+      // EPD_13IN3K_SendData(b2);
+    }
+    EPD_13IN3K_TurnOnDisplay_4GRAY();
+
+    printf("Display 2 done and sleep\r\n");
+    delete[] imageData; 
     EPD_13IN3K_Sleep();
 
-    server.send(200, "text/plain", "OK)");
+    server.send(200, "text/plain", "OK 2");
 }
 
 void creareServer() {
@@ -108,7 +151,8 @@ void creareServer() {
 
     printf("Server created");
 
-    server.on("/display", HTTP_POST, handlePOST);
+    server.on("/display1", HTTP_POST, postPart1);
+    server.on("/display2", HTTP_POST, postPart2);
 
     server.onNotFound([]() {
       server.send(404, "text/plain", "404");

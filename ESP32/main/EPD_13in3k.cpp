@@ -49,7 +49,7 @@ const unsigned char LUT_DATA_4Gray[112] =    //112bytes
 function :	Software reset
 parameter:
 ******************************************************************************/
-static void EPD_13IN3K_Reset(void)
+void EPD_13IN3K_Reset(void)
 {
     DEV_Digital_Write(EPD_RST_PIN, 1);
     DEV_Delay_ms(100);
@@ -64,7 +64,7 @@ function :	send command
 parameter:
      Reg : Command register
 ******************************************************************************/
-static void EPD_13IN3K_SendCommand(UBYTE Reg)
+void EPD_13IN3K_SendCommand(UBYTE Reg)
 {
     DEV_Digital_Write(EPD_DC_PIN, 0);
     DEV_Digital_Write(EPD_CS_PIN, 0);
@@ -77,7 +77,7 @@ function :	send data
 parameter:
     Data : Write data
 ******************************************************************************/
-static void EPD_13IN3K_SendData(UBYTE Data)
+void EPD_13IN3K_SendData(UBYTE Data)
 {
     DEV_Digital_Write(EPD_DC_PIN, 1);
     DEV_Digital_Write(EPD_CS_PIN, 0);
@@ -106,7 +106,7 @@ void EPD_13IN3K_ReadBusy(void)
 function :	Turn On Display
 parameter:
 ******************************************************************************/
-static void EPD_13IN3K_TurnOnDisplay(void)
+void EPD_13IN3K_TurnOnDisplay(void)
 {
 	EPD_13IN3K_SendCommand(0x22); //Display Update Control
 	EPD_13IN3K_SendData(0xF7);
@@ -114,7 +114,7 @@ static void EPD_13IN3K_TurnOnDisplay(void)
 	EPD_13IN3K_ReadBusy();
 }
 
-static void EPD_13IN3K_TurnOnDisplay_Part(void)
+void EPD_13IN3K_TurnOnDisplay_Part(void)
 {
 	EPD_13IN3K_SendCommand(0x22); //Display Update Control
 	EPD_13IN3K_SendData(0xCF);
@@ -122,7 +122,7 @@ static void EPD_13IN3K_TurnOnDisplay_Part(void)
 	EPD_13IN3K_ReadBusy();
 }
 
-static void EPD_13IN3K_TurnOnDisplay_4GRAY(void)
+void EPD_13IN3K_TurnOnDisplay_4GRAY(void)
 {
 	EPD_13IN3K_SendCommand(0x22); //Display Update Control
 	EPD_13IN3K_SendData(0xC7);
@@ -348,25 +348,6 @@ parameter:
 void EPD_13IN3K_Display(UBYTE *Image)
 {
 
-	// EPD_13IN3K_SendCommand(0x24);   //write RAM for black(0)/white (1)
-	// for(i=0; i<height; i++)
-	// {
-	// 	for(j=0; j<width; j+=2) {
-  //     UBYTE b1 = buf[j + i*width];
-  //     UBYTE b2 = buf[j + i*width + 1];
-  //     UBYTE res = 0;
-  //     res += (b1 & 0b11) == 3 ? 0b1 : 0; 
-  //     res += (b1 & 0b1100) == 3 ? 0b10 : 0; 
-  //     res += (b1 & 0b110000) == 3 ? 0b100 : 0; 
-  //     res += (b1 & 0b11000000) == 3 ? 0b1000 : 0; 
-  //     res += (b2 & 0b11) == 3 ? 0b10000 : 0; 
-  //     res += (b2 & 0b1100) == 3 ? 0b100000 : 0; 
-  //     res += (b2 & 0b110000) == 3 ? 0b1000000 : 0; 
-  //     res += (b2 & 0b11000000) == 3 ? 0b10000000 : 0; 
-  //     EPD_13IN3K_SendData(res);
-  //   }
-	// }
-
   UDOUBLE i;
   EPD_13IN3K_SendCommand(0x24);
   for(i=0; i<81600; i++) {
@@ -485,8 +466,8 @@ void EPD_13IN3K_4GrayDisplay(UBYTE *Image)
 {
     UDOUBLE i,j,k,o;
     UBYTE temp1,temp2,temp3;
-    UWORD height = EPD_13IN3K_HEIGHT;
-	UWORD width = EPD_13IN3K_WIDTH/8;
+    UWORD height = EPD_13IN3K_HEIGHT / 2;
+	  UWORD width = EPD_13IN3K_WIDTH/8;
 
     // old  data
     EPD_13IN3K_SendCommand(0x24);
