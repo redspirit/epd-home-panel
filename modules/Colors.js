@@ -1,14 +1,41 @@
 const {Jimp} = require('jimp');
-
-// console.log(Jimp);
+const gm = require('gm').subClass({
+    imageMagick: '7+',
+    // appPath: 'C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI\\magick.exe'
+});
 
 class Colors {
-    constructor() {
+    constructor(paletteFile) {
+        this.paletteFile = paletteFile;
         this.paletteColors = null;
     }
 
-    async preparePalette(paletteFile) {
-        let {bitmap} = await Jimp.read(paletteFile);
+    // testImg(imgPath) {
+    //     gm(imgPath)
+    //         .resize(960, 680, '!')
+    //         .map(this.paletteFile)
+    //         .write(imgPath+'test.png', (err) => {
+    //             console.log('err', err);
+    //         });
+    // }
+
+    remapImage(imgPath) {
+        return new Promise((resolve, reject) => {
+            gm(imgPath)
+                .resize(960, 680, '!')
+                .map(this.paletteFile)
+                .toBuffer('PNG', (err, buffer) => {
+                    if (err) reject(err);
+                    resolve(buffer);
+            });
+        });
+        // .write(imgPath+'test.png', (err) => {
+        //     console.log('err', err);
+        // });
+    }
+
+    async preparePalette() {
+        let {bitmap} = await Jimp.read(this.paletteFile);
         this.paletteColors = [];
         for(let i = 0; i < bitmap.width; i++) {
             this.paletteColors.push(bitmap.data.readUIntBE(i * 4, 3));
@@ -26,9 +53,9 @@ class Colors {
         return [~r1, ~r2];
     }
 
-    async getImageBytes(imageFile) {
+    async getImageBytes(pngBuffer) {
         if(!this.paletteColors) throw new Error('palette image is not loaded');
-        let {bitmap} = await Jimp.read(imageFile);
+        let {bitmap} = await Jimp.fromBuffer(pngBuffer);
 
         let pixelsCount = bitmap.data.length / 4;
         let indexes = [];
