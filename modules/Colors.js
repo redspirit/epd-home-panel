@@ -19,9 +19,9 @@ class Colors {
     //         });
     // }
 
-    remapImage(imgPath) {
+    remapImage(inputImageBuffer) {
         return new Promise((resolve, reject) => {
-            gm(imgPath)
+            gm(inputImageBuffer, 'screen.png')
                 .resize(960, 680, '!')
                 .map(this.paletteFile)
                 .toBuffer('PNG', (err, buffer) => {
