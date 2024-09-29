@@ -10,15 +10,6 @@ class Colors {
         this.paletteColors = null;
     }
 
-    // testImg(imgPath) {
-    //     gm(imgPath)
-    //         .resize(960, 680, '!')
-    //         .map(this.paletteFile)
-    //         .write(imgPath+'test.png', (err) => {
-    //             console.log('err', err);
-    //         });
-    // }
-
     remapImage(inputImageBuffer) {
         return new Promise((resolve, reject) => {
             gm(inputImageBuffer, 'screen.png')
