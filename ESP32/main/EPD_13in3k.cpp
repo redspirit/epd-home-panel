@@ -426,10 +426,10 @@ void EPD_13IN3K_WritePicture_Base(UBYTE *Image, UBYTE Block)
 
 void EPD_13IN3K_Display_Part(UBYTE *Image, UWORD x, UWORD y, UWORD w, UWORD l)
 {
-	UWORD Ystart = y;
-	UWORD Yend =  y + l;
-  UWORD Xstart = x;
-  UWORD Xend = x + w;
+    UWORD Ystart = y;
+    UWORD Yend =  y + l;
+    UWORD Xstart = x;
+    UWORD Xend = x + w;
 
 
     if((Xstart % 8 + Xend % 8 == 8 && Xstart % 8 > Xend % 8) || Xstart % 8 + Xend % 8 == 0 || (Xend - Xstart)%8 == 0)
@@ -444,22 +444,22 @@ void EPD_13IN3K_Display_Part(UBYTE *Image, UWORD x, UWORD y, UWORD w, UWORD l)
     }
 
     UWORD i, Width;
-	Width = Xend -  Xstart;
-	UWORD IMAGE_COUNTER = Width * (Yend-Ystart);
+    Width = Xend -  Xstart;
+    UWORD IMAGE_COUNTER = Width * (Yend-Ystart);
 
     Xend -= 1;
-	Yend -= 1;	
+    Yend -= 1;	
 
-	EPD_13IN3K_SetWindows(Xstart*8, y, Xend*8, y+l-1);
+    EPD_13IN3K_SetWindows(Xstart*8, y, Xend*8, y+l-1);
 
-	EPD_13IN3K_SetCursor(Xstart*8, y);
+    EPD_13IN3K_SetCursor(Xstart*8, y);
 
-	EPD_13IN3K_SendCommand(0x24);   //write RAM for black(0)/white (1)
-	for (i = 0; i < IMAGE_COUNTER; i++) {
-	    EPD_13IN3K_SendData(Image[i]);
-	}
+    EPD_13IN3K_SendCommand(0x24);   //write RAM for black(0)/white (1)
+    for (i = 0; i < IMAGE_COUNTER; i++) {
+        EPD_13IN3K_SendData(Image[i]);
+    }
 
-	EPD_13IN3K_TurnOnDisplay_Part();	
+    EPD_13IN3K_TurnOnDisplay_Part();	
 }
 
 void EPD_13IN3K_4GrayDisplay(UBYTE *Image)

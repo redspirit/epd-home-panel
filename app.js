@@ -1,13 +1,20 @@
 
-let screenshot = require('./modules/screenshot');
-let {makeRequest} = require('./modules/Http');
+let {BrowserScreenshot} = require('./modules/BrowserScreenshot');
+// let yandexWeather = require('./modules/yandexWeather');
+let {makeRequest} = require('./modules/displayApi');
 let Colors = require('./modules/Colors');
 let fs = require('fs').promises;
 
+let browserScreenshot = new BrowserScreenshot();
+
 setTimeout(async () => {
     // return;
-    let broswer = await screenshot.makeBrowser();
-    let scrbuf = await screenshot.byUrl(broswer, 'https://weather.rambler.ru/v-sankt-peterburge/today/?updated');
+
+    // let w = await yandexWeather.getWeather();
+    // return console.log(w);
+
+    await browserScreenshot.createBrowserPage()
+    let scrbuf = await browserScreenshot.makeByUrl('https://world-weather.ru/pogoda/russia/saint_petersburg/');
     console.log('Done', scrbuf);
 
     await fs.writeFile('./tmp/s.png', scrbuf);
