@@ -1,23 +1,22 @@
-
 let {BrowserScreenshot} = require('./modules/BrowserScreenshot');
 // let yandexWeather = require('./modules/yandexWeather');
-let templater = require('./modules/templater');
+let {Dashboard} = require('./modules/Dashboard');
 let {makeRequest} = require('./modules/displayApi');
 let Colors = require('./modules/Colors');
 let fs = require('fs').promises;
 
 let browserScreenshot = new BrowserScreenshot();
+let dashboard = new Dashboard();
 
 setTimeout(async () => {
     // return;
 
-    let html = templater.getPageHtml();
+    let html = dashboard.getPage({});
 
     // let w = await yandexWeather.getWeather();
     // return console.log(html);
 
     await browserScreenshot.createBrowserPage()
-    // let scrbuf = await browserScreenshot.makeByUrl('https://world-weather.ru/pogoda/russia/saint_petersburg/');
     let scrbuf = await browserScreenshot.makeByHTML(html);
 
     await fs.writeFile('./tmp/s.png', scrbuf);
