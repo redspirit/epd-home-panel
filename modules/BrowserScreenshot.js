@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs').promises;
 
 class BrowserScreenshot {
     #minimal_args = [
@@ -57,6 +58,13 @@ class BrowserScreenshot {
         });
     }
 
+    async addCssFile(path) {
+        let cssContent = await fs.readFile(path);
+        await this.page.addStyleTag({
+            content: cssContent.toString()
+        });
+    }
+
     async makeByUrl(url) {
         await this.page.goto(url);
         let pngData = await this.page.screenshot({ type: 'png' });
@@ -65,6 +73,9 @@ class BrowserScreenshot {
 
     async makeByHTML(htmlContent) {
         await this.page.setContent(htmlContent);
+        await this.page.addStyleTag({
+            path: './templates/styles.css'
+        });
         let pngData = await this.page.screenshot({ type: 'png' });
         return Buffer.from(pngData);
     }
