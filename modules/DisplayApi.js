@@ -1,6 +1,5 @@
 const axios = require('axios');
 
-
 class DisplayApi {
     constructor(baseURL) {
         this.client = axios.create({baseURL});

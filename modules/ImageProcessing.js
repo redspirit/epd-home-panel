@@ -77,11 +77,11 @@ class ImageProcessing {
                 for(let j = 0; j < 8; j++) {
                     let indVal = mPixel[7 - j]; // value 0-3
                     if(this.mct === ImageProcessing.MONOCHROME_CODING_1_3) {
-                        mPixByte += (indVal === 0 ? 1 : 0) << j;
+                        mPixByte += (indVal === 0 ? 0 : 1) << j;
                     } else if (this.mct === ImageProcessing.MONOCHROME_CODING_2_2) {
-                        mPixByte += (indVal <= 1 ? 1 : 0) << j;
+                        mPixByte += (indVal <= 1 ? 0 : 1) << j;
                     } else if(this.mct === ImageProcessing.MONOCHROME_CODING_3_1) {
-                        mPixByte += (indVal === 2 ? 1 : 0) << j;
+                        mPixByte += (indVal === 2 ? 0 : 1) << j;
                     }
                 }
                 monoBytesArr.push(mPixByte);

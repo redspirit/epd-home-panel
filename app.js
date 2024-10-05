@@ -2,7 +2,7 @@ let {BrowserScreenshot} = require('./modules/BrowserScreenshot');
 // let yandexWeather = require('./modules/yandexWeather');
 let {Dashboard} = require('./modules/Dashboard');
 let {DisplayApi} = require('./modules/DisplayApi');
-let Colors = require('./modules/Colors');
+let ImageProcessing = require('./modules/ImageProcessing');
 let fs = require('fs').promises;
 
 const ESP_URL = `http://192.168.1.49:3000`;
@@ -21,17 +21,19 @@ setTimeout(async () => {
 
     await browserScreenshot.createBrowserPage()
     // await browserScreenshot.addCssFile(`${process.cwd()}/templates/styles.css`);
-    let scrbuf = await browserScreenshot.makeByHTML(html);
+    // let scrbuf = await browserScreenshot.makeByHTML(html);
+    let scrbuf = await browserScreenshot.makeByUrl('https://world-weather.ru/pogoda/russia/saint_petersburg/');
 
     await fs.writeFile('./tmp/s.png', scrbuf);
-    process.exit(0);
+    // process.exit(0);
 
-    let colors = new Colors('./palettes/palette2.png');
-    await colors.preparePalette();
-    let b = await colors.remapImage(scrbuf);
-    let out = await colors.getImageBytes(b);
+    let imProc = new ImageProcessing('./palettes/palette2.png');
+    await imProc.preparePalette();
+    let b = await imProc.remapImage(scrbuf);
+    let out = await imProc.getImageBytes(b);
 
-    await api.drawGrayscale(out.grayPart1, out.grayPart2);
+    // await api.drawGrayscale(out.grayscale.part1, out.grayscale.part2);
+    await api.drawMonochrome(out.monochrome);
 
     console.log('ok');
     process.exit(0);

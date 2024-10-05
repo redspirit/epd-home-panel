@@ -110,8 +110,8 @@ void creareServer() {
     server.on("/display/gray1", HTTP_POST, postGrayPart1);
     server.on("/display/gray2", HTTP_POST, postGrayPart2);
     server.on("/display/mono", HTTP_POST, postMono);
-    server.on("/clear", HTTP_POST, postClear);
     server.on("/display/part", HTTP_POST, postPartial);
+    server.on("/clear", HTTP_POST, postClear);
 
     server.onNotFound([]() {
       server.send(404, "text/plain", "not found");

@@ -22,6 +22,7 @@ void EPD_13IN3K_4GrayDisplay(UBYTE *Image);
 void EPD_13IN3K_Sleep(void);
 void EPD_13IN3K_SendData(UBYTE Data);
 void EPD_13IN3K_SendCommand(UBYTE Reg);
+void EPD_13IN3K_TurnOnDisplay(void);
 void EPD_13IN3K_TurnOnDisplay_4GRAY(void);
 
 #endif
