@@ -18,16 +18,24 @@ class ImageProcessing {
     remapImage(inputImageBuffer) {
         return new Promise((resolve, reject) => {
             gm(inputImageBuffer, 'screen.png')
-                .resize(960, 680, '!')
+                // .resize(960, 680, '!')
                 .map(this.paletteFile)
                 .toBuffer('PNG', (err, buffer) => {
                     if (err) reject(err);
                     resolve(buffer);
             });
         });
-        // .write(imgPath+'test.png', (err) => {
-        //     console.log('err', err);
-        // });
+    }
+
+    remapImage2Colors(inputImageBuffer) {
+        return new Promise((resolve, reject) => {
+            gm(inputImageBuffer, 'screen.png')
+                .colors(2)
+                .toBuffer('PNG', (err, buffer) => {
+                    if (err) reject(err);
+                    resolve(buffer);
+                });
+        });
     }
 
     async preparePalette() {

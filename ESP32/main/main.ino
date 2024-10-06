@@ -5,22 +5,12 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
+#define WHITE          0xFF
+#define BLACK          0x00
+
 const char *ssid = "Kisa";
 const char *password = "elitenet";
 WebServer server(3000);
-
-
-void test1(UBYTE *BlackImage) {
-  DEV_Delay_ms(3000);
-
-  printf("Partial refresh\r\n");
-
-  EPD_13IN3K_Init_Part();
-
-	printf("Partial refresh\r\n");
-
-	EPD_13IN3K_Display_Part(BlackImage, 10, 150, 200, 50);
-}
 
 void postGrayPart1() {
     String body = server.arg("plain");
@@ -58,7 +48,7 @@ void postGrayPart2() {
 
     printf("Display 2 done and sleep\r\n");
     delete[] imageData;
-    EPD_13IN3K_Sleep();
+    // EPD_13IN3K_Sleep();
 
     server.send(200, "text/plain", "OK");
 }
@@ -87,13 +77,30 @@ void postMono() {
 }
 
 void postClear() {
-	EPD_13IN3K_Init();
+	  EPD_13IN3K_Init();
     EPD_13IN3K_Clear();
     EPD_13IN3K_Sleep();
     server.send(200, "text/plain", "OK");
 }
 
 void postPartial() {
+    UWORD paramX = server.arg("x").toInt();
+    UWORD paramY = server.arg("y").toInt();
+    UWORD paramW = server.arg("w").toInt();
+    UWORD paramH = server.arg("h").toInt();
+    String body = server.arg("plain");
+    UDOUBLE bytesCount = paramW * paramH;
+    UBYTE *imageData = new UBYTE[bytesCount];
+    body.getBytes(imageData, bytesCount);
+
+    EPD_13IN3K_Init_Part();
+    EPD_13IN3K_color_Base(WHITE);
+	  EPD_13IN3K_Display_Part(imageData, paramX, paramY, paramW, paramH);
+
+    printf("Display partial done and sleep\r\n");
+    delete[] imageData;
+    // EPD_13IN3K_Sleep();
+
     server.send(200, "text/plain", "OK");
 }
 
@@ -101,8 +108,8 @@ void creareServer() {
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
-      Serial.print(".");
+        delay(500);
+        Serial.print(".");
     }
 
     printf("Server created");
@@ -126,15 +133,14 @@ void setup() {
 
     creareServer();
 
-    printf("e-Paper Init and Clear...\r\n");
-
 	  EPD_13IN3K_Init();
     EPD_13IN3K_Clear();
+    EPD_13IN3K_Sleep();
 
     printf("Ready post...\r\n");
 }
 
 void loop() {
-  server.handleClient();
-  delay(5);
+    server.handleClient();
+    delay(5);
 }

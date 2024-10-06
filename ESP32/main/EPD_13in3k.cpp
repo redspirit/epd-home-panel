@@ -382,7 +382,7 @@ void EPD_13IN3K_Display_Base(UBYTE *Image)
 
 void EPD_13IN3K_WritePicture(UBYTE *Image, UBYTE Block)
 {
-    UDOUBLE Width, Height;
+  UDOUBLE Width, Height;
 	Width =(EPD_13IN3K_WIDTH % 8 == 0)?(EPD_13IN3K_WIDTH / 8 ):(EPD_13IN3K_WIDTH / 8 + 1);
 	Height = EPD_13IN3K_HEIGHT;
 	
@@ -412,7 +412,7 @@ void EPD_13IN3K_WritePicture_Base(UBYTE *Image, UBYTE Block)
         }
 	}
     
-    EPD_13IN3K_SendCommand(0x26);
+  EPD_13IN3K_SendCommand(0x26);
 	for (UDOUBLE j = 0; j < Height/2; j++) {
         for (UDOUBLE i = 0; i < Width; i++) {
             EPD_13IN3K_SendData(Image[i + j * Width]);
@@ -430,7 +430,6 @@ void EPD_13IN3K_Display_Part(UBYTE *Image, UWORD x, UWORD y, UWORD w, UWORD l)
     UWORD Yend =  y + l;
     UWORD Xstart = x;
     UWORD Xend = x + w;
-
 
     if((Xstart % 8 + Xend % 8 == 8 && Xstart % 8 > Xend % 8) || Xstart % 8 + Xend % 8 == 0 || (Xend - Xstart)%8 == 0)
     {
@@ -454,9 +453,14 @@ void EPD_13IN3K_Display_Part(UBYTE *Image, UWORD x, UWORD y, UWORD w, UWORD l)
 
     EPD_13IN3K_SetCursor(Xstart*8, y);
 
-    EPD_13IN3K_SendCommand(0x24);   //write RAM for black(0)/white (1)
+    EPD_13IN3K_SendCommand(0x24);
     for (i = 0; i < IMAGE_COUNTER; i++) {
         EPD_13IN3K_SendData(Image[i]);
+    }
+
+    EPD_13IN3K_SendCommand(0x26);
+    for (i = 0; i < IMAGE_COUNTER; i++) {
+        EPD_13IN3K_SendData(0x00);
     }
 
     EPD_13IN3K_TurnOnDisplay_Part();	

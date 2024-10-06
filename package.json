@@ -19,9 +19,11 @@
   "homepage": "https://github.com/redspirit/epd-home-panel#readme",
   "dependencies": {
     "axios": "^1.7.7",
+    "canvas": "^2.11.2",
     "express": "^4.21.0",
     "gm": "^1.25.0",
     "jimp": "^1.6.0",
+    "moment": "^2.30.1",
     "pug": "^3.0.3",
     "puppeteer": "^23.3.0"
   }
